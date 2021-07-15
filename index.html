@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>NoisyPlayer with WebAudioAPI</title>
+    <link rel="stylesheet" href="index.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="init">
+        <h1>Init Web Audio API for Chrome</h1>
+    </div>
+    <img src="" alt="" id="banner">
+    <div id="MusicPlayer">
+
+        <canvas id="canvas"></canvas>
+
+        <div id="playerInfoSwitch">Display Player Info</div>
+        <div id="playerInfo">
+            <div id="audioInfo"></div>
+            <div id="ctxInfo"></div>
+        </div>
+
+        <div id="playInfo">
+            <div>
+                <img id="albumImg" src="" alt="">
+                <label>
+                    <span id="curTime"></span>
+                    <input id="playProgressBar" type="range" min="0" max="" step="1" value="0">
+                    <span id="fullTime"></span>
+                </label>
+                <audio preload="metadata">
+                    <source id="music" src="" data-artistimgurl="InitArtist.png" data-albumimgurl="InitAlbum.jpg"
+                        data-bannerimgurl='banner.jpg' title="Empty" type="audio/mpeg">
+                </audio>
+                <select id="realSongList"></select>
+            </div>
+        </div>
+
+        <div id="switch">
+            <div id="listSwitch" class="toggleSwitch"><img src="src/image/icons/list.png" alt=""></div>
+            <div id="ctxSwitch" class="toggleSwitch"><img src="src/image/icons/equalizer.png" alt=""></div>
+        </div>
+
+        <div id="contorlsPanel">
+            <div id="listContorls">
+                <div id="songList" class="card">
+                    <div class="card-front">
+                        <ul id="songSelected">
+                            <h2>Empty</h2>
+                        </ul>
+                        <div id="toSongBook">
+                            <h4>To Song Book</h4>
+                        </div>
+                    </div>
+                    <div class="card-back">
+                        <ul id="songBook"></ul>
+                        <div id="returnAndFresh">
+                            <h4>Refresh List</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="ctxContorls">
+                <label>
+                    <h2>Stereo Pan</h2>
+                    <span id="stereoPanValue">0</span><br>
+                    <input id="stereoPanControl" class="surroundRange" type="range" min="-1" max="1" step="0.1"
+                        value="0">
+                </label>
+
+                <label>
+                    <h2>Delay Gain</h2>
+                    <span id="delayGainValue">0</span><br>
+                    <input id="delayGainControl" class="surroundRange" type="range" min="0" max="1" step="0.01"
+                        value="0">
+                </label>
+
+                <label>
+                    <h2>Delay Filter</h2>
+                    <span id="filterValue">1000</span><br>
+                    <input id="filterControl" class="surroundRange" type="range" min="0" max="2000" step="100"
+                        value="1000">
+                </label>
+
+                <label>
+                    <h2>Delay Time</h2>
+                    <span id="delayValue">0</span><br>
+                    <input id="delayControl" class="surroundRange" type="range" min="0" max="1" step="0.05" value="0">
+                </label>
+
+                <!-- <label>
+                    <h2>Delay Time</h2>
+                    <span id="delayValue">0</span><br>
+                    <input id="delayControl" class="surroundRange" type="range" min="0" max="1" step="0.05" value="0">
+                </label> -->
+            </div>
+        </div>
+
+        <!-- <marquee behavior="" direction="">Test Test Hello?</marquee> -->
+        <div id="contorlBar">
+            <div id="songInfo">
+                <div class="cover">
+                    <img id="artistImg" src="" alt="">
+                </div>
+                <div class="text">
+                    <!-- <h2 id="artistName"></h2> -->
+                    <div id="songName"></div>
+                </div>
+            </div>
+            <div id="PlayerBtns">
+                <div class="PlayerBtn" id="btnPrev" onclick="SongJump(-1)">
+                    <!-- <i class="material-icons">skip_previous</i> -->
+                    <img src="src/image/icons/skip_previous.png" alt="">
+                </div>
+                <div class="PlayerBtn" id="btnPrevTime" onclick="ChangeTime(-10)">
+                    <!-- <i class="material-icons">fast_rewind</i> -->
+                    <img src="src/image/icons/fast_rewind.png" alt="">
+                </div>
+                <div class="PlayerBtn" id="btnPlay" onclick="PlayPause()">
+                    <!-- <i class="material-icons">play_arrow</i> -->
+                    <img src="src/image/icons/play_arrow.png" alt="">
+                </div>
+                <div class="PlayerBtn" id="btnStop" onclick="Stop()">
+                    <!-- <i class="material-icons">stop</i> -->
+                    <img src="src/image/icons/stop.png" alt="">
+                </div>
+                <div class="PlayerBtn" id="btnNextTime" onclick="ChangeTime(10)">
+                    <!-- <i class="material-icons">fast_forward</i> -->
+                    <img src="src/image/icons/fast_forward.png" alt="">
+                </div>
+                <div class="PlayerBtn" id="btnNext" onclick="SongJump(1)">
+                    <!-- <i class="material-icons">skip_next</i> -->
+                    <img src="src/image/icons/skip_next.png" alt="">
+                </div>
+            </div>
+            <div id="playerContorls">
+                <div id="repeatContorls">
+                    <i class="material-icons" id="randomSwitch">shuffle</i>
+                    <i class="material-icons" id="repeatOneSwitch">repeat_one</i>
+                    <i class="material-icons" id="repeatAllSwitch">repeat</i>
+                </div>
+                <div id="PlayerVolume">
+                    <i id="musicVolume" class="material-icons" onclick="VolumeSwitch()">headphones</i>
+                    <!-- <img id="musicVolume" src="src/image/icons/headphone.png" alt=""> -->
+                    <!-- <i class="material-icons">headset</i>
+                    <i class="material-icons">headset_off</i>  -->
+                    <label>
+                        <input id="volumeControl" type="range" min="0" max="100" step="1" value="100">
+                        <h5 id="volumeValue">100</h5>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="index.js"></script>
+    <!-- Web audio api -->
+    <script src="CtxInit.js"></script>
+    <!-- Canvas -->
+    <script src="Draw.js"></script>
+    <!-- For Debug -->
+    <script src="PlayerInfo.js"></script>
+
+</body>
+
+</html>
